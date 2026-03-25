@@ -44,7 +44,7 @@ app.use(express.urlencoded({ extended: true }));
 connectDB();
 
 // API Routes (must be before static so /api/* is not served as static)
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
 app.use('/api/usage', usageRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/organizations', organizationRoutes);
