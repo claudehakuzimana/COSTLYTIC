@@ -23,7 +23,7 @@ export default function Signup() {
   const register = useAuthStore(state => state.register);
   // Used only for redirecting the browser to OAuth.
   // Prefer full URL; fall back to same-origin proxy.
-  const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
 
   useEffect(() => {
     let mounted = true;
@@ -73,13 +73,13 @@ export default function Signup() {
           role: formData.role
         };
         await register(userData);
-        navigate('/dashboard');
+        navigate('/app/dashboard');
       } catch (error) {
         console.error('Signup error:', error);
         if (!error.response) {
           setErrors({
             general:
-              'Cannot reach the API. Run the server (`cd server && npm start`) and the Vite app (`cd client && npm run dev`), then use http://localhost:3000. Restart Vite after editing client/.env.'
+              'Cannot reach the API. Run `npm run dev` from the project root, then use http://localhost:3000. Restart the app after changing NEXT_PUBLIC_API_URL.'
           });
           return;
         }

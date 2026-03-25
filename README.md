@@ -22,11 +22,11 @@ A production-grade SaaS platform for managing and optimizing AI infrastructure c
 ## Tech Stack
 
 ### Frontend
-- React 18 + Vite
+- Next.js 15 + React 18
 - Tailwind CSS + ShadCN UI
 - Chart.js for data visualization
 - Zustand for state management
-- React Router for navigation
+- Next.js routing
 
 ### Backend
 - Node.js + Express.js
@@ -58,33 +58,12 @@ A production-grade SaaS platform for managing and optimizing AI infrastructure c
 
 2. **Environment setup:**
    ```bash
-   # Backend
-   cd server
-   cp .env.example .env
-   # Edit .env with your MongoDB URI and JWT secret
-
-   # Frontend
-   cd ../client
    npm install
    ```
 
 3. **Start services:**
    ```bash
-   # Using Docker Compose (recommended)
-   docker-compose up -d
-
-   # Or manually:
-   # Terminal 1: MongoDB
-   mongod
-
-   # Terminal 2: Redis
-   redis-server
-
-   # Terminal 3: Backend
-   cd server && npm run dev
-
-   # Terminal 4: Frontend
-   cd client && npm run dev
+   npm run dev
    ```
 
 4. **Seed data:**
@@ -94,9 +73,8 @@ A production-grade SaaS platform for managing and optimizing AI infrastructure c
    ```
 
 5. **Access the application:**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000
-   - API Docs: http://localhost:5000/api
+   - App: http://localhost:3000
+   - API: http://localhost:3000/api
 
 ### Docker Deployment
 
@@ -106,6 +84,51 @@ docker-compose up --build
 
 # Run in background
 docker-compose up -d --build
+```
+
+## Deployment
+
+### Vercel Deployment
+
+The Next.js app is configured to deploy from the repo root.
+
+Use these Vercel settings:
+
+- Framework preset: `Next.js`
+- Build command: `npm run build`
+- Output directory: leave blank
+- Install command: `npm install`
+
+If you want to point the app at an external backend, set this environment variable in Vercel:
+
+```bash
+NEXT_PUBLIC_API_URL=https://your-backend-domain.com/api
+```
+
+If you keep the backend inside the Next app, you can leave `NEXT_PUBLIC_API_URL` unset and the app will use `/api`.
+
+### Backend
+
+The Express API is also mounted into the Next app through `pages/api/[...path].js`, so you do not need a separate backend deployment unless you prefer one.
+
+If you do deploy the API separately, use:
+
+```bash
+NODE_ENV=production
+PORT=6000
+MONGO_URI=your-mongodb-uri
+JWT_SECRET=your-production-secret
+REDIS_URL=your-redis-url
+FRONTEND_URL=https://your-frontend-domain.com
+CORS_ORIGIN=https://your-frontend-domain.com
+```
+
+If you use Google OAuth, also set:
+
+```bash
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_CALLBACK_URL=https://your-backend-domain.com/api/auth/google/callback
 ```
 
 ## API Documentation
@@ -146,7 +169,7 @@ PUT /api/organizations/:id
 
 ### Ingest AI Usage Data
 ```bash
-curl -X POST http://localhost:5000/api/usage/ingest \
+curl -X POST http://localhost:3000/api/usage/ingest \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{

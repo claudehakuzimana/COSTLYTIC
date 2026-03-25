@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// Use same-origin proxy by default to avoid hardcoding backend ports.
-// Vite dev config proxies `/api` to the backend.
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+// Use same-origin API routes by default.
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

@@ -27,7 +27,7 @@ export default function OAuthCallback() {
       try {
         await loginWithToken(token);
         toast.success('Signed in with Google');
-        navigate('/dashboard', { replace: true });
+        navigate('/app/dashboard', { replace: true });
       } catch (e) {
         console.error('OAuth callback error:', e);
         setError('profile_failed');

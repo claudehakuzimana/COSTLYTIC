@@ -19,7 +19,7 @@ export default function Login() {
   const login = useAuthStore(state => state.login);
   // Used only for redirecting the browser to OAuth.
   // Prefer full URL; fall back to same-origin proxy.
-  const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
 
   useEffect(() => {
     let mounted = true;
@@ -60,13 +60,13 @@ export default function Login() {
     setLoading(true);
     try {
       await login(formData.email, formData.password);
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (error) {
       console.error('Login error:', error);
       if (!error.response) {
         setErrors({
           general:
-            'Cannot reach the API. In one terminal: `cd server && npm start` (port 6000). In another: `cd client && npm run dev`. Then open http://localhost:3000 and restart Vite after changing .env.'
+            'Cannot reach the API. Run `npm run dev` from the project root, then open http://localhost:3000. If you changed NEXT_PUBLIC_API_URL, restart the app.'
         });
         return;
       }
