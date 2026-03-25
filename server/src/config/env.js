@@ -1,6 +1,13 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Load env files relative to the server directory so imported Next API routes
+// can still see the same variables as the standalone Express server.
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../.env.local") });
 
 /** Comma-separated list; used so both localhost and 127.0.0.1 work in dev */
 function parseCorsOrigins() {

@@ -64,6 +64,17 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
+    if (
+      error?.name === 'MongoParseError' ||
+      error?.name === 'MongooseServerSelectionError' ||
+      error?.name === 'MongoServerSelectionError'
+    ) {
+      return res.status(503).json({
+        error:
+          'Database connection failed. Check MONGO_URI, Atlas network access, and whether the password is URL-encoded.'
+      });
+    }
+
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -121,6 +132,17 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
+    if (
+      error?.name === 'MongoParseError' ||
+      error?.name === 'MongooseServerSelectionError' ||
+      error?.name === 'MongoServerSelectionError'
+    ) {
+      return res.status(503).json({
+        error:
+          'Database connection failed. Check MONGO_URI, Atlas network access, and whether the password is URL-encoded.'
+      });
+    }
+
     res.status(500).json({ error: 'Internal server error' });
   }
 };
