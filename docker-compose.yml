@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7-jammy
+    container_name: ai-cost-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: ai_cost_intelligence
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    networks:
+      - ai-cost-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-cost-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-cost-network
+
+  server:
+    build: ./server
+    container_name: ai-cost-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 6000
+      MONGO_URI: mongodb://admin:password123@mongodb:27017/ai_cost_intelligence?authSource=admin
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "6000:6000"
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - ai-cost-network
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  client:
+    build: ./client
+    container_name: ai-cost-client
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    networks:
+      - ai-cost-network
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  ai-cost-network:
+    driver: bridge
